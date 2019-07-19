@@ -24,6 +24,11 @@ public enum Piece {
         if (currentPosition == positionsCount) currentPosition = 0;
     }
 
+    public void rotateBack() {
+        currentPosition--;
+        if (currentPosition == -1) currentPosition = positionsCount - 1;
+    }
+
     public Point[] getPoints() {
         return pointSets[currentPosition];
     }

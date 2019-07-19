@@ -2,14 +2,12 @@ package com.tetris.model;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class BoardTest {
 
     @Test
-    public void toStringTest() {
+    public void boardTest() {
         Board board = new Board();
-        board.createNewPice();
+        board.createNewPiece(Piece.I);
         board.moveDown();
         board.moveDown();
         board.moveDown();
@@ -19,8 +17,8 @@ public class BoardTest {
         board.moveDown();
         board.moveDown();
 
-        board.rotatePiece();
-        board.createNewPice();
+        board.rotate();
+        board.createNewPiece(Piece.I);
         board.moveDown();
         board.moveDown();
         board.moveDown();
