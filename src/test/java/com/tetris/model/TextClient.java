@@ -1,6 +1,5 @@
 package com.tetris.model;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TextClient {

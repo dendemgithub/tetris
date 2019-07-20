@@ -44,21 +44,3 @@ class Piece {
 
 
 }
-
-class Point {
-    private int x;
-    private int y;
-
-    public void setCoordinates(int[] coordinates) {
-        this.x = coordinates[0];
-        this.y = coordinates[1];
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-}

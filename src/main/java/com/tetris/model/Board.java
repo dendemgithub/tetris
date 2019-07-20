@@ -3,11 +3,11 @@ package com.tetris.model;
 import java.util.*;
 
 public class Board {
-    static final int WIDTH = 10;
-    private static final int HEIGTH = 20;
-    private static final int effectiveHeigth = HEIGTH + 4;
+    public static final int COLUMNS = 10;
+    public static final int ROWS = 20;
+    private static final int effectiveRows = ROWS + 4;
 
-    private Cell[][] cells = new Cell[effectiveHeigth][WIDTH];
+    private Cell[][] cells = new Cell[effectiveRows][COLUMNS];
     private Piece currentPiece;
     private int pieceX;
     private int pieceY;
@@ -15,8 +15,8 @@ public class Board {
     private boolean gameOver;
 
     Board() {
-        for(int i = 0; i < effectiveHeigth; i++ )
-            for(int j = 0; j < WIDTH; j++)
+        for(int i = 0; i < effectiveRows; i++ )
+            for(int j = 0; j < COLUMNS; j++)
                 cells[i][j] = new Cell();
 
         gameOver = false;
@@ -25,20 +25,20 @@ public class Board {
 
     public String toString() {
         StringBuilder board = new StringBuilder();
-        for (int i = HEIGTH - 1; i >= 0; i--) {
-            for (int j = 0; j < WIDTH; j++) {
-                board.append(cells[i][j].getPoint() == null ? "." : "X");
+        for (int i = ROWS - 1; i >= 0; i--) {
+            for (int j = 0; j < COLUMNS; j++) {
+                board.append(getCells()[i][j].getPoint() == null ? "." : "X");
             }
             board.append("\n");
         }
-        for (int i = 0; i < WIDTH; i++) board.append("--");
+        for (int i = 0; i < COLUMNS; i++) board.append("--");
         return board.toString();
     }
 
     void createNewPiece(Piece piece) {
         currentPiece = piece;
-        pieceX = WIDTH/2;
-        pieceY = HEIGTH - 1;
+        pieceX = COLUMNS /2;
+        pieceY = ROWS - 1;
         placePiece();
     }
 
@@ -59,8 +59,8 @@ public class Board {
         for (Point point: currentPiece.getPoints()) {
             x = point.getX() + newX;
             y = point.getY() + newY;
-            if (x < 0 || x > WIDTH - 1) return false;
-            if (y < 0 || y > effectiveHeigth - 1) return false;
+            if (x < 0 || x > COLUMNS - 1) return false;
+            if (y < 0 || y > effectiveRows - 1) return false;
             if (cells[y][x].isSolid()) return false;
         }
         return true;
@@ -119,31 +119,33 @@ public class Board {
     private int burnLines() {
         List<Integer> linesToBurn = new ArrayList<Integer>(4);
         Cell[] line;
-        for(int i = 0; i < effectiveHeigth; i++) {
+        for(int i = 0; i < effectiveRows; i++) {
             line = cells[i];
-            if(Arrays.stream(line).filter(Cell::isSolid).count() == WIDTH) linesToBurn.add(i);
+            if(Arrays.stream(line).filter(Cell::isSolid).count() == COLUMNS) linesToBurn.add(i);
         }
         Map<Integer, Integer> updatedIndexMap = new HashMap<>();
-        for(int oldIndex = 0; oldIndex < effectiveHeigth; oldIndex++) {
+        for(int oldIndex = 0; oldIndex < effectiveRows; oldIndex++) {
             int decrease = 0;
             for(int lineToBurnIndex: linesToBurn) {
                 if (oldIndex > lineToBurnIndex) decrease++;
                 updatedIndexMap.put(oldIndex, oldIndex-decrease);
             }
         }
-        for(int oldIndex = 0; oldIndex < effectiveHeigth; oldIndex++) {
+        for(int oldIndex = 0; oldIndex < effectiveRows; oldIndex++) {
             Integer newIndex = updatedIndexMap.get(oldIndex);
             if (newIndex != null) cells[newIndex] = cells[oldIndex];
         }
-        for(int i = effectiveHeigth - linesToBurn.size(); i < effectiveHeigth; i++)
-            for(int j = 0; j < WIDTH; j++)
+        for(int i = effectiveRows - linesToBurn.size(); i < effectiveRows; i++) {
+            cells[i] = new Cell[COLUMNS];
+            for (int j = 0; j < COLUMNS; j++)
                 cells[i][j] = new Cell();
+        }
         return linesToBurn.size();
     }
 
     private boolean checkGameOver() {
-        for (int i = HEIGTH; i < effectiveHeigth; i++) {
-            for (int j = 0; j < WIDTH; j++) {
+        for (int i = ROWS; i < effectiveRows; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 if (cells[i][j].isSolid()) {
                     gameOver = true;
                     return true;
@@ -152,31 +154,8 @@ public class Board {
         }
         return gameOver;
     }
-}
 
-class Cell {
-    private Point point;
-
-    private boolean solid = false;
-
-    Point getPoint() {
-        return point;
-    }
-
-    void setPoint(Point point) {
-        this.point = point;
-    }
-
-    void clear() {
-        point = null;
-        solid = false;
-    }
-
-    boolean isSolid() {
-        return getPoint() != null && solid;
-    }
-
-    void makeSolid() {
-        this.solid = true;
+    public Cell[][] getCells() {
+        return Arrays.copyOfRange(cells, 0, ROWS);
     }
 }

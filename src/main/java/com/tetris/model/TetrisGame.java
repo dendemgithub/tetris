@@ -1,12 +1,13 @@
 package com.tetris.model;
 
 public class TetrisGame {
-    private Board board;
+    private Board board = new Board();
     private Piece nextPiece;
     private boolean started = false;
     private boolean paused;
     private int scores;
     private boolean gameOver;
+
 
     public void start() {
         board = new Board();
@@ -47,6 +48,7 @@ public class TetrisGame {
     }
 
     public void userInput(UserCommands command) {
+        if (command == null) return;
         if(paused && !command.equals(UserCommands.PAUSE)) return;
 
         switch (command) {
@@ -64,6 +66,9 @@ public class TetrisGame {
             case PAUSE:
                 paused = !paused;
                 break;
+            case START:
+                this.start();
+                break;
         }
     }
 
@@ -73,7 +78,7 @@ public class TetrisGame {
         board += String.format("\nScores: %d\n", scores);
         if(gameOver) board += "GAME OVER!\n";
         StringBuilder buffer = new StringBuilder();
-        for(int i = 0; i < Board.WIDTH; i++)
+        for(int i = 0; i < Board.COLUMNS; i++)
             buffer.append('-');
         return board + buffer.toString();
     }
