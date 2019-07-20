@@ -42,11 +42,10 @@ public class Board {
         placePiece();
     }
 
-    private boolean erasePiece() {
+    private void erasePiece() {
         for (Point point: currentPiece.getPoints()) {
             cells[point.getY() + pieceY][point.getX() + pieceX].clear();
         }
-        return true;
     }
 
     private void placePiece() {

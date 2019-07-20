@@ -13,8 +13,8 @@ public class TetrisGame {
         scores = 0;
         started = true;
         gameOver = false;
-        board.createNewPiece(Piece.getRandomPiece());
-        nextPiece = Piece.getRandomPiece();
+        board.createNewPiece(new Piece(PieceType.getRandomPiece()));
+        createNewPiece();
     }
 
     public Board getBoard() {
@@ -22,6 +22,10 @@ public class TetrisGame {
     }
 
     public void tick() {
+        if (gameOver) return;
+        if (!started) return;
+        if (paused) return;
+
         if(!board.moveDown()) {
             int linesBurnt = board.finishTurn();
             if (linesBurnt < 0) {
@@ -29,9 +33,13 @@ public class TetrisGame {
             } else {
                 updateScores(linesBurnt);
                 board.createNewPiece(nextPiece);
-                nextPiece = Piece.getRandomPiece();
+                createNewPiece();
             }
         }
+    }
+
+    private void createNewPiece() {
+        nextPiece = new Piece(PieceType.getRandomPiece());
     }
 
     private void updateScores(int linesBurnt) {

@@ -1,54 +1,57 @@
 package com.tetris.model;
 
-import java.util.Random;
-
-public enum Piece {
-    O(PointSets.O),
-    I(PointSets.I),
-    ;
-
-    private Point[][] pointSets;
+class Piece {
     private int currentPosition;
-    private final int positionsCount;
 
-    private static final Random rnd = new Random();
+    PieceType type;
+    private Point[] points;
 
-    Piece(Point[][] pointSets) {
-        this.pointSets = pointSets;
-        positionsCount = pointSets.length;
+    Piece(PieceType type) {
+        this.type = type;
         currentPosition = 0;
+        createPoints();
+    }
+
+    private void createPoints() {
+        points = new Point[type.getPoints(currentPosition).length];
+        for(int i = 0; i < points.length; i++)
+            points[i] = new Point();
+        setPointPositions();
+    }
+
+    private void setPointPositions() {
+        int[][] positions = type.getPoints(currentPosition);
+        for(int i = 0; i < type.getPoints(currentPosition).length; i++) {
+            points[i].setCoordinates(positions[i]);
+        }
     }
 
     public void rotate() {
         currentPosition++;
-        if (currentPosition == positionsCount) currentPosition = 0;
+        if (currentPosition == type.getPositionsCount()) currentPosition = 0;
+        setPointPositions();
     }
 
     public void rotateBack() {
         currentPosition--;
-        if (currentPosition == -1) currentPosition = positionsCount - 1;
+        if (currentPosition == -1) currentPosition = type.getPositionsCount() - 1;
+        setPointPositions();
     }
 
     public Point[] getPoints() {
-        return pointSets[currentPosition];
+        return points;
     }
 
-    public static Piece getRandomPiece() {
-        return values()[rnd.nextInt(values().length)];
-    }
+
 }
 
 class Point {
     private int x;
     private int y;
 
-    Point(int x, int y) {
-        setCoordinates(x, y);
-    }
-
-    public void setCoordinates(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public void setCoordinates(int[] coordinates) {
+        this.x = coordinates[0];
+        this.y = coordinates[1];
     }
 
     public int getX() {
@@ -58,13 +61,4 @@ class Point {
     public int getY() {
         return y;
     }
-}
-
-class PointSets {
-    static final Point[][] O = {{new Point(0, 0), new Point(0, 1), new Point(1, 0), new Point(1, 1)}};
-
-    static final Point[][] I = {
-            {new Point(0, 1), new Point(0, 0), new Point(0, -1), new Point(0, -2)},
-            {new Point(-1, 0), new Point(0, 0), new Point(1, 0), new Point(2, 0)}
-    };
 }
