@@ -3,7 +3,7 @@ package com.tetris.model;
 class Piece {
     private int currentPosition;
 
-    PieceType type;
+    private PieceType type;
     private Point[] points;
 
     Piece(PieceType type) {
@@ -26,19 +26,19 @@ class Piece {
         }
     }
 
-    public void rotate() {
+    void rotate() {
         currentPosition++;
         if (currentPosition == type.getPositionsCount()) currentPosition = 0;
         setPointPositions();
     }
 
-    public void rotateBack() {
+    void rotateBack() {
         currentPosition--;
         if (currentPosition == -1) currentPosition = type.getPositionsCount() - 1;
         setPointPositions();
     }
 
-    public Point[] getPoints() {
+    Point[] getPoints() {
         return points;
     }
 

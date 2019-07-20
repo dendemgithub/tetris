@@ -3,8 +3,8 @@ package com.tetris.model;
 import java.util.*;
 
 public class Board {
-    public static final int WIDTH = 10;
-    public static final int HEIGTH = 20;
+    static final int WIDTH = 10;
+    private static final int HEIGTH = 20;
     private static final int effectiveHeigth = HEIGTH + 4;
 
     private Cell[][] cells = new Cell[effectiveHeigth][WIDTH];
@@ -84,15 +84,15 @@ public class Board {
         return move(0, -1);
     }
 
-    public void moveLeft() {
+    void moveLeft() {
         move(-1, 0);
     }
 
-    public void moveRight() {
+    void moveRight() {
         move(1, 0);
     }
 
-    public void rotate() {
+    void rotate() {
         erasePiece();
         currentPiece.rotate();
         if (!canBePlaced(pieceX, pieceY)) currentPiece.rotateBack();
@@ -104,9 +104,9 @@ public class Board {
      * Return -1 if gameover. Otherwise return number of lines burnt.
      * */
 
-    public int finishTurn() {
+    int finishTurn() {
         for (Point point: currentPiece.getPoints()) {
-            cells[point.getY() + pieceY][point.getX() + pieceX].setSolid();
+            cells[point.getY() + pieceY][point.getX() + pieceX].makeSolid();
         }
         int linesBurnt = burnLines();
         return checkGameOver() ? -1 : linesBurnt;
@@ -172,14 +172,11 @@ class Cell {
         solid = false;
     }
 
-    public boolean isSolid() {
+    boolean isSolid() {
         return getPoint() != null && solid;
     }
 
-    public void setSolid(boolean solid) {
-        this.solid = solid;
-    }
-    public void setSolid() {
-        setSolid(true);
+    void makeSolid() {
+        this.solid = true;
     }
 }
