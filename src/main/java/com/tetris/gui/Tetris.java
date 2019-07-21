@@ -102,6 +102,11 @@ public class Tetris extends Canvas implements Runnable {
         int ticks = 0;
 
         while (running) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             now = System.nanoTime();
             frameDelta += (now - lastTime)/nanosPerFrame;
             tickDelta += (now - lastTime)/nanosPerTick;
