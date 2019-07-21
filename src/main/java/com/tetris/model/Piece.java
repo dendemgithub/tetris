@@ -1,6 +1,6 @@
 package com.tetris.model;
 
-class Piece {
+public class Piece {
     private int currentPosition;
 
     private PieceType type;
@@ -12,8 +12,12 @@ class Piece {
     }
 
     Piece(PieceType type, int color) {
+        this(type, color, 0);
+    }
+
+    Piece(PieceType type, int color, int initialPostion) {
         this.type = type;
-        currentPosition = 0;
+        currentPosition = initialPostion;
         this.color = color;
         createPoints();
     }
@@ -44,7 +48,7 @@ class Piece {
         setPointPositions();
     }
 
-    Point[] getPoints() {
+    public Point[] getPoints() {
         return points;
     }
 

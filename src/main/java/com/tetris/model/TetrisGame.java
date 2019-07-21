@@ -42,7 +42,12 @@ public class TetrisGame {
     }
 
     private void createNewPiece() {
-        nextPiece = new Piece(PieceType.getRandomPiece(), new Random().nextInt(1000));
+        PieceType type = PieceType.getRandomPiece();
+        nextPiece = new Piece(type, new Random().nextInt(1000), new Random().nextInt(type.getPositionsCount()));
+    }
+
+    public Piece getNextPiece() {
+        return nextPiece;
     }
 
     private void updateScores(int linesBurnt) {
@@ -69,7 +74,11 @@ public class TetrisGame {
                 paused = !paused;
                 break;
             case START:
-                this.start();
+                start();
+                break;
+            // cheats
+            case CHEAT_ROTATE_NEXT:
+                rotateNext();
                 break;
         }
     }
@@ -83,5 +92,10 @@ public class TetrisGame {
         for(int i = 0; i < Board.COLUMNS; i++)
             buffer.append('-');
         return board + buffer.toString();
+    }
+
+    //cheats
+    public void rotateNext() {
+        nextPiece.rotate();
     }
 }

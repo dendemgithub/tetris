@@ -15,10 +15,10 @@ public class Tetris extends Canvas implements Runnable {
     private static final int WIDTH = 600;
 
     private int FPS = 60;
-    private int defaultTPS = 3; // see below
+    private double defaultTPS = 3; // see below
     private int dropTPS = 60; // defaultTPS for "drop mode"
     private boolean droping = false;
-    private double nanosPerTick =  1000 * 1000 * 1000 / defaultTPS;
+    private double nanosPerTick = 1000 * 1000 * 1000 / defaultTPS;
     private int CPS = 50; // how frequently user input is processed
 
     private int boardHeigth;
@@ -30,6 +30,12 @@ public class Tetris extends Canvas implements Runnable {
     private int boardRight;
     private ArrayList<Color> pieceColors = new ArrayList<>();
 
+    private int previewTop;
+    private int previewBottom;
+    private int previewLeft;
+    private int previewRight;
+    private int previewWidth;
+    private int previewHeight;
 
     private boolean running;
     private TetrisGame game;
@@ -61,7 +67,8 @@ public class Tetris extends Canvas implements Runnable {
         frame.setVisible(true);
         frame.setResizable(false);
 
-        calculateBoardParams();
+        initBoardParams();
+        initPreviewParams();
         prepareColorList();
 
         createBufferStrategy(2);
@@ -69,6 +76,7 @@ public class Tetris extends Canvas implements Runnable {
         graphics = (Graphics2D) strategy.getDrawGraphics();
         game = new TetrisGame();
     }
+
     public static void main(String... args) {
         new Tetris().start();
     }
@@ -81,7 +89,10 @@ public class Tetris extends Canvas implements Runnable {
     private void render() {
         graphics = (Graphics2D) strategy.getDrawGraphics();
         graphics.clearRect(0, 0, WIDTH, HEIGHT);
+
         drawBoard();
+        drawPreview();
+
         strategy.show();
         graphics.dispose();
     }
@@ -91,8 +102,8 @@ public class Tetris extends Canvas implements Runnable {
     public void run() {
         long now;
         long lastTime = System.nanoTime();
-        double nanosPerFrame = 1000 * 1000 * 1000/FPS;
-        double nanosPerCommand =  1000 * 1000 * 1000/CPS;
+        double nanosPerFrame = 1000 * 1000 * 1000 / FPS;
+        double nanosPerCommand = 1000 * 1000 * 1000 / CPS;
         double frameDelta = 0;
         double tickDelta = 0;
         double userInputDelta = 0;
@@ -108,43 +119,43 @@ public class Tetris extends Canvas implements Runnable {
                 e.printStackTrace();
             }
             now = System.nanoTime();
-            frameDelta += (now - lastTime)/nanosPerFrame;
-            tickDelta += (now - lastTime)/nanosPerTick;
-            userInputDelta += (now - lastTime)/nanosPerCommand;
+            frameDelta += (now - lastTime) / nanosPerFrame;
+            tickDelta += (now - lastTime) / nanosPerTick;
+            userInputDelta += (now - lastTime) / nanosPerCommand;
 
             timer += now - lastTime;
             lastTime = now;
 
-            if(frameDelta >= 1) {
+            if (frameDelta >= 1) {
                 frameDelta--;
                 render();
                 frames++;
             }
 
-            if(tickDelta >= 1) {
+            if (tickDelta >= 1) {
                 tickDelta--;
                 gameLoop();
                 ticks++;
             }
 
-            if(userInputDelta >= 1) {
+            if (userInputDelta >= 1) {
                 userInputDelta--;
                 UserCommands command = keyboard.getCommand();
-                if(command == UserCommands.DROP) {
-                    if(!droping) {
-                        nanosPerTick =  1000 * 1000 * 1000 / dropTPS;
+                if (command == UserCommands.DROP) {
+                    if (!droping) {
+                        nanosPerTick = 1000 * 1000 * 1000 / dropTPS;
                         droping = true;
                     }
                 } else {
-                    if(droping) {
-                        nanosPerTick =  1000 * 1000 * 1000 / defaultTPS;
+                    if (droping) {
+                        nanosPerTick = 1000 * 1000 * 1000 / defaultTPS;
                         droping = false;
                     }
                     game.userInput(command);
                 }
             }
 
-            if(timer > 1000000000) {
+            if (timer > 1000000000) {
                 System.out.println("Frames per second: " + frames + ", ticks per second: " + ticks);
                 frames = 0;
                 timer = 0;
@@ -154,7 +165,7 @@ public class Tetris extends Canvas implements Runnable {
     }
 
     private void start() {
-        if(running) return;
+        if (running) return;
 
         running = true;
         new Thread(this).start();
@@ -162,40 +173,63 @@ public class Tetris extends Canvas implements Runnable {
 
     private void drawBoard() {
         graphics.setColor(Color.BLACK);
-        graphics.drawLine(5, 5, 5, HEIGHT-5);
-        graphics.drawLine(5, 5, WIDTH-5, 5);
-        graphics.drawLine(WIDTH-5, HEIGHT-5, WIDTH-5, 5);
-        graphics.drawLine(WIDTH-5, HEIGHT-5, 5, HEIGHT-5);
+        graphics.drawLine(5, 5, 5, HEIGHT - 5);
+        graphics.drawLine(5, 5, WIDTH - 5, 5);
+        graphics.drawLine(WIDTH - 5, HEIGHT - 5, WIDTH - 5, 5);
+        graphics.drawLine(WIDTH - 5, HEIGHT - 5, 5, HEIGHT - 5);
 
-        graphics.setColor(Color.BLUE);
         graphics.fillRect(boardLeft, boardTop, boardWidth, boardHeigth);
 
         drawCells();
 
         graphics.setColor(Color.RED);
-        for(int i = 1; i < Board.ROWS; i++)
-            graphics.drawLine(boardLeft, boardBottom - i*cellSize, boardRight, boardBottom - i*cellSize);
-        for(int i = 1; i < Board.COLUMNS; i++)
-            graphics.drawLine(boardLeft + i*cellSize, boardTop, boardLeft + i*cellSize, boardBottom);
+        for (int i = 1; i < Board.ROWS; i++)
+            graphics.drawLine(boardLeft, boardBottom - i * cellSize, boardRight, boardBottom - i * cellSize);
+        for (int i = 1; i < Board.COLUMNS; i++)
+            graphics.drawLine(boardLeft + i * cellSize, boardTop, boardLeft + i * cellSize, boardBottom);
+    }
+
+    private void drawPreview() {
+        graphics.setColor(Color.BLUE);
+        graphics.fillRect(previewLeft, previewTop, previewWidth, previewHeight);
+
+        Piece piece = game.getNextPiece();
+        if (piece != null) {
+            for (Point point : piece.getPoints()) {
+                graphics.setColor(pieceColors.get(point.getColor() % pieceColors.size()));
+                graphics.fillRect(
+                        previewLeft + (point.getX() + 2) * cellSize,
+                        previewTop - (point.getY() - 1) * cellSize,
+                        cellSize,
+                        cellSize);
+
+            }
+        }
+
+        graphics.setColor(Color.RED);
+        for (int i = 1; i < 4; i++)
+            graphics.drawLine(previewLeft, previewBottom - i * cellSize, previewRight, previewBottom - i * cellSize);
+        for (int i = 1; i < 4; i++)
+            graphics.drawLine(previewLeft + i * cellSize, previewTop, previewLeft + i * cellSize, previewBottom);
     }
 
     private void drawCells() {
         Cell[][] cells = game.getBoard().getCells();
         Color color;
         Point point;
-        for(int i = 0; i < Board.ROWS; i++)
+        for (int i = 0; i < Board.ROWS; i++)
             for (int j = 0; j < Board.COLUMNS; j++) {
                 point = cells[i][j].getPoint();
                 if (point != null) {
                     color = pieceColors.get(point.getColor() % pieceColors.size());
                     if (color == null) color = Color.GRAY;
                     graphics.setColor(color);
-                    graphics.fillRect(boardLeft + j * cellSize, boardBottom - (i + 1) * cellSize, cellSize, cellSize );
+                    graphics.fillRect(boardLeft + j * cellSize, boardBottom - (i + 1) * cellSize, cellSize, cellSize);
                 }
             }
     }
 
-    private void calculateBoardParams() {
+    private void initBoardParams() {
         boardWidth = WIDTH * 2 / 4;
         boardHeigth = Board.ROWS / Board.COLUMNS * boardWidth;
         cellSize = boardWidth / Board.COLUMNS;
@@ -206,7 +240,12 @@ public class Tetris extends Canvas implements Runnable {
     }
 
     private void initPreviewParams() {
-
+        previewTop = boardTop;
+        previewBottom = previewTop + 4 * cellSize;
+        previewRight = boardLeft - cellSize;
+        previewLeft = previewRight - 4 * cellSize;
+        previewHeight = 4 * cellSize;
+        previewWidth = previewHeight;
     }
 
     private void prepareColorList() {
@@ -221,4 +260,5 @@ public class Tetris extends Canvas implements Runnable {
         game = new TetrisGame();
         game.start();
     }
+
 }

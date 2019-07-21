@@ -6,5 +6,8 @@ public enum UserCommands {
     DROP,
     LEFT,
     RIGHT,
-    ROTATE
+    ROTATE,
+
+    //chets
+    CHEAT_ROTATE_NEXT
 }

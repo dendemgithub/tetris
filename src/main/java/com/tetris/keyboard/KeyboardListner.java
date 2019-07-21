@@ -34,6 +34,10 @@ public class KeyboardListner implements KeyListener {
             case KeyEvent.VK_SPACE:
                 command = UserCommands.DROP;
                 break;
+            //cheats
+            case KeyEvent.VK_CONTROL:
+                command = UserCommands.CHEAT_ROTATE_NEXT;
+                break;
         }
     }
 
