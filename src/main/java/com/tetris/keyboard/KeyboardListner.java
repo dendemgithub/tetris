@@ -10,7 +10,6 @@ public class KeyboardListner implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Key pressed: " + e.getKeyCode());
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ENTER:
                 command = UserCommands.START;
@@ -26,9 +25,10 @@ public class KeyboardListner implements KeyListener {
             case KeyEvent.VK_A:
                 command = UserCommands.LEFT;
                 break;
-            case KeyEvent.VK_W:
+            case KeyEvent.VK_UP:
             case KeyEvent.VK_DOWN:
             case KeyEvent.VK_S:
+            case KeyEvent.VK_W:
                 command = UserCommands.ROTATE;
                 break;
             case KeyEvent.VK_SPACE:

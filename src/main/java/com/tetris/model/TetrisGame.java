@@ -1,5 +1,7 @@
 package com.tetris.model;
 
+import java.util.Random;
+
 public class TetrisGame {
     private Board board = new Board();
     private Piece nextPiece;
@@ -40,7 +42,7 @@ public class TetrisGame {
     }
 
     private void createNewPiece() {
-        nextPiece = new Piece(PieceType.getRandomPiece());
+        nextPiece = new Piece(PieceType.getRandomPiece(), new Random().nextInt(1000));
     }
 
     private void updateScores(int linesBurnt) {

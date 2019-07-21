@@ -5,10 +5,6 @@ public class Point {
     private int y;
     private int color;
 
-    Point() {
-        this.color = 0;
-    }
-
     Point(int color) {
         this.color = color;
     }

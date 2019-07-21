@@ -7,7 +7,7 @@ public class BoardTest {
     @Test
     public void boardTest() {
         Board board = new Board();
-        board.createNewPiece(new Piece(PieceType.I));
+        //board.createNewPiece(new Piece(PieceType.I));
         board.moveDown();
         board.moveDown();
         board.moveDown();
@@ -18,7 +18,7 @@ public class BoardTest {
         board.moveDown();
 
         board.rotate();
-        board.createNewPiece(new Piece(PieceType.I));
+        //board.createNewPiece(new Piece(PieceType.I));
         board.moveDown();
         board.moveDown();
         board.moveDown();

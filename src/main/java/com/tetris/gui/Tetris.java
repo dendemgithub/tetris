@@ -7,8 +7,7 @@ import com.tetris.model.Point;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class Tetris extends Canvas implements Runnable {
     private static final String name = "Tetris";
@@ -17,10 +16,10 @@ public class Tetris extends Canvas implements Runnable {
 
     private int FPS = 60;
     private int defaultTPS = 3; // see below
-    private int dropTPS = 30; // defaultTPS for "drop mode"
+    private int dropTPS = 60; // defaultTPS for "drop mode"
     private boolean droping = false;
     private double nanosPerTick =  1000 * 1000 * 1000 / defaultTPS;
-    private int CPS = 20; // how frequently user input is processed
+    private int CPS = 50; // how frequently user input is processed
 
     private int boardHeigth;
     private int boardWidth;
@@ -29,7 +28,7 @@ public class Tetris extends Canvas implements Runnable {
     private int boardBottom;
     private int boardLeft;
     private int boardRight;
-    private Map<Integer, Color> colorMap;
+    private ArrayList<Color> pieceColors = new ArrayList<>();
 
 
     private boolean running;
@@ -63,6 +62,7 @@ public class Tetris extends Canvas implements Runnable {
         frame.setResizable(false);
 
         calculateBoardParams();
+        prepareColorList();
 
         createBufferStrategy(2);
         strategy = this.getBufferStrategy();
@@ -187,9 +187,9 @@ public class Tetris extends Canvas implements Runnable {
             for (int j = 0; j < Board.COLUMNS; j++) {
                 point = cells[i][j].getPoint();
                 if (point != null) {
-                    color = colorMap.get(cells[i][j].getPoint().getColor());
+                    color = pieceColors.get(point.getColor() % pieceColors.size());
                     if (color == null) color = Color.GRAY;
-                    graphics.setColor(Color.GRAY);
+                    graphics.setColor(color);
                     graphics.fillRect(boardLeft + j * cellSize, boardBottom - (i + 1) * cellSize, cellSize, cellSize );
                 }
             }
@@ -203,9 +203,18 @@ public class Tetris extends Canvas implements Runnable {
         boardTop = boardBottom - boardHeigth;
         boardRight = WIDTH - 10;
         boardLeft = boardRight - boardWidth;
-        colorMap = new HashMap<>();
-        colorMap.put(0, Color.GRAY);
+    }
 
+    private void initPreviewParams() {
+
+    }
+
+    private void prepareColorList() {
+        pieceColors.add(Color.GRAY);
+        pieceColors.add(Color.GREEN);
+        pieceColors.add(Color.YELLOW);
+        pieceColors.add(Color.MAGENTA);
+        pieceColors.add(Color.CYAN);
     }
 
     private void startGame() {

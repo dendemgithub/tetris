@@ -5,17 +5,23 @@ class Piece {
 
     private PieceType type;
     private Point[] points;
+    private int color;
 
     Piece(PieceType type) {
+        this(type, 0);
+    }
+
+    Piece(PieceType type, int color) {
         this.type = type;
         currentPosition = 0;
+        this.color = color;
         createPoints();
     }
 
     private void createPoints() {
         points = new Point[type.getPoints(currentPosition).length];
         for(int i = 0; i < points.length; i++)
-            points[i] = new Point();
+            points[i] = new Point(color);
         setPointPositions();
     }
 
