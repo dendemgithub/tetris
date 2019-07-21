@@ -35,7 +35,7 @@ public enum PieceType {
     }
 
     private static class PointSets {
-        static final int[][][] O = {{{0, 0}, {0,1}, {1,0}, {1,1}}};
+        static final int[][][] O = {{{-1, 0}, {-1,1}, {0,0}, {0,1}}};
         static final int[][][] I = {
                 {{-2, 1}, {-1, 1}, {0, 1}, {1, 1}},
                 {{0, 2}, {0, 1}, {0, 0}, {0, -1}},
