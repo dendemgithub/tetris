@@ -21,7 +21,7 @@ public class Tetris extends Canvas implements Runnable {
     private double nanosPerTick = 1000 * 1000 * 1000 / defaultTPS;
     private int CPS = 50; // how frequently user input is processed
 
-    private int boardHeigth;
+    private int boardHeight;
     private int boardWidth;
     private int cellSize;
     private int boardTop;
@@ -36,6 +36,13 @@ public class Tetris extends Canvas implements Runnable {
     private int previewRight;
     private int previewWidth;
     private int previewHeight;
+
+    private int statsTop;
+    private int statsBottom;
+    private int statsLeft;
+    private int statsRight;
+    private int statsWidth;
+    private int statsHeight;
 
     private boolean running;
     private TetrisGame game;
@@ -69,6 +76,7 @@ public class Tetris extends Canvas implements Runnable {
 
         initBoardParams();
         initPreviewParams();
+        initStatParams();
         prepareColorList();
 
         createBufferStrategy(2);
@@ -92,6 +100,7 @@ public class Tetris extends Canvas implements Runnable {
 
         drawBoard();
         drawPreview();
+        drawStats();
 
         strategy.show();
         graphics.dispose();
@@ -178,7 +187,7 @@ public class Tetris extends Canvas implements Runnable {
         graphics.drawLine(WIDTH - 5, HEIGHT - 5, WIDTH - 5, 5);
         graphics.drawLine(WIDTH - 5, HEIGHT - 5, 5, HEIGHT - 5);
 
-        graphics.fillRect(boardLeft, boardTop, boardWidth, boardHeigth);
+        graphics.fillRect(boardLeft, boardTop, boardWidth, boardHeight);
 
         drawCells();
 
@@ -202,7 +211,6 @@ public class Tetris extends Canvas implements Runnable {
                         previewTop - (point.getY() - 1) * cellSize,
                         cellSize,
                         cellSize);
-
             }
         }
 
@@ -229,14 +237,25 @@ public class Tetris extends Canvas implements Runnable {
             }
     }
 
+    private void drawStats() {
+        graphics.setColor(Color.BLACK);
+        graphics.drawLine(statsLeft, statsTop, statsRight, statsTop);
+        graphics.drawLine(statsLeft, statsBottom, statsRight, statsBottom);
+        graphics.drawLine(statsLeft, statsTop, statsLeft, statsBottom);
+        graphics.drawLine(statsRight, statsTop, statsRight, statsBottom);
+
+        graphics.drawString("Scores: " + game.getScores(), statsLeft, statsTop + 25);
+        graphics.drawString("Lines: " + game.getLinesBurnt(), statsLeft, statsTop + 55);
+    }
+
     private void initBoardParams() {
-        boardWidth = WIDTH * 2 / 4;
-        boardHeigth = Board.ROWS / Board.COLUMNS * boardWidth;
+        boardLeft = WIDTH/2 + 5;
+        boardRight = WIDTH - 5;
+        boardWidth = boardRight - boardLeft;
+        boardHeight = Board.ROWS / Board.COLUMNS * boardWidth;
         cellSize = boardWidth / Board.COLUMNS;
         boardBottom = HEIGHT - 10;
-        boardTop = boardBottom - boardHeigth;
-        boardRight = WIDTH - 10;
-        boardLeft = boardRight - boardWidth;
+        boardTop = boardBottom - boardHeight;
     }
 
     private void initPreviewParams() {
@@ -246,6 +265,15 @@ public class Tetris extends Canvas implements Runnable {
         previewLeft = previewRight - 4 * cellSize;
         previewHeight = 4 * cellSize;
         previewWidth = previewHeight;
+    }
+
+    private void initStatParams() {
+        statsTop = (HEIGHT / 2) + 5;
+        statsBottom = statsTop + (HEIGHT / 4);
+        statsLeft = 5;
+        statsRight = (WIDTH/2) - 5;
+        statsWidth = statsRight - statsLeft;
+        statsHeight = statsBottom - statsTop;
     }
 
     private void prepareColorList() {

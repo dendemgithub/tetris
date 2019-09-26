@@ -9,6 +9,7 @@ public class TetrisGame {
     private boolean paused;
     private int scores;
     private boolean gameOver;
+    private int totalLinesBurnt;
 
 
     public void start() {
@@ -29,7 +30,7 @@ public class TetrisGame {
         if (!started) return;
         if (paused) return;
 
-        if(!board.moveDown()) {
+        if (!board.moveDown()) {
             int linesBurnt = board.finishTurn();
             if (linesBurnt < 0) {
                 gameOver = true;
@@ -51,12 +52,13 @@ public class TetrisGame {
     }
 
     private void updateScores(int linesBurnt) {
+        totalLinesBurnt += linesBurnt;
         scores += (Math.pow(2, linesBurnt) - 1) * 100;
     }
 
     public void userInput(UserCommands command) {
         if (command == null) return;
-        if(paused && !command.equals(UserCommands.PAUSE)) return;
+        if (paused && !command.equals(UserCommands.PAUSE)) return;
 
         switch (command) {
             case DROP:
@@ -83,13 +85,21 @@ public class TetrisGame {
         }
     }
 
+    public int getScores() {
+        return scores;
+    }
+
+    public int getLinesBurnt() {
+        return totalLinesBurnt;
+    }
+
     @Override
     public String toString() {
         String board = this.board.toString();
         board += String.format("\nScores: %d\n", scores);
-        if(gameOver) board += "GAME OVER!\n";
+        if (gameOver) board += "GAME OVER!\n";
         StringBuilder buffer = new StringBuilder();
-        for(int i = 0; i < Board.COLUMNS; i++)
+        for (int i = 0; i < Board.COLUMNS; i++)
             buffer.append('-');
         return board + buffer.toString();
     }
