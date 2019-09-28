@@ -1,4 +1,4 @@
-package com.tetris.model;
+package ua.ddemianyk.games.tetris.model;
 
 public enum UserCommands {
     START,

@@ -1,12 +1,12 @@
-package com.tetris.keyboard;
+package ua.ddemianyk.games.tetris.keyboard;
 
-import com.tetris.model.UserCommands;
+import ua.ddemianyk.games.tetris.model.UserCommands;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyboardListner implements KeyListener {
-    UserCommands command;
+    private UserCommands command;
 
     @Override
     public void keyPressed(KeyEvent e) {

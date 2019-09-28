@@ -1,8 +1,8 @@
-package com.tetris.gui;
+package ua.ddemianyk.games.tetris.gui;
 
-import com.tetris.keyboard.KeyboardListner;
-import com.tetris.model.*;
-import com.tetris.model.Point;
+import ua.ddemianyk.games.tetris.keyboard.KeyboardListner;
+import ua.ddemianyk.games.tetris.model.*;
+import ua.ddemianyk.games.tetris.model.Point;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +52,7 @@ public class Tetris extends Canvas implements Runnable {
     private KeyboardListner keyboard = new KeyboardListner();
 
 
-    public Tetris() {
+    private Tetris() {
         Dimension dimension = new Dimension(WIDTH, HEIGHT);
         this.setPreferredSize(dimension);
         this.setMaximumSize(dimension);
