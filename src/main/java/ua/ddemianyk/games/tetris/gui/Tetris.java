@@ -11,13 +11,13 @@ import java.util.ArrayList;
 
 public class Tetris extends Canvas implements Runnable {
     private static final String name = "Tetris";
-    private static final int HEIGHT = 800;
+    private static final int HEIGHT = 600;
     private static final int WIDTH = 600;
 
     private int FPS = 60;
     private double defaultTPS = 3; // see below
     private int dropTPS = 60; // defaultTPS for "drop mode"
-    private boolean droping = false;
+    private boolean dropping = false;
     private double nanosPerTick = 1000 * 1000 * 1000 / defaultTPS;
     private int CPS = 50; // how frequently user input is processed
 
@@ -151,21 +151,21 @@ public class Tetris extends Canvas implements Runnable {
                 userInputDelta--;
                 UserCommands command = keyboard.getCommand();
                 if (command == UserCommands.DROP) {
-                    if (!droping) {
+                    if (!dropping) {
                         nanosPerTick = 1000 * 1000 * 1000 / dropTPS;
-                        droping = true;
+                        dropping = true;
                     }
                 } else {
-                    if (droping) {
+                    if (dropping) {
                         nanosPerTick = 1000 * 1000 * 1000 / defaultTPS;
-                        droping = false;
+                        dropping = false;
                     }
                     game.userInput(command);
                 }
             }
 
             if (timer > 1000000000) {
-                System.out.println("Frames per second: " + frames + ", ticks per second: " + ticks);
+                //System.out.println("Frames per second: " + frames + ", ticks per second: " + ticks);
                 frames = 0;
                 timer = 0;
                 ticks = 0;
