@@ -43,6 +43,11 @@ public class Tetris extends Canvas implements Runnable {
     private int statsRight;
     private int statsWidth;
     private int statsHeight;
+    private Font statsFont;
+
+    private int tipTop;
+    private int tipLeft;
+    private Font tipFont;
 
     private boolean running;
     private TetrisGame game;
@@ -50,7 +55,6 @@ public class Tetris extends Canvas implements Runnable {
     private BufferStrategy strategy;
     private Graphics2D graphics;
     private KeyboardListner keyboard = new KeyboardListner();
-
 
     private Tetris() {
         Dimension dimension = new Dimension(WIDTH, HEIGHT);
@@ -77,6 +81,7 @@ public class Tetris extends Canvas implements Runnable {
         initBoardParams();
         initPreviewParams();
         initStatParams();
+        initTipParams();
         prepareColorList();
 
         createBufferStrategy(2);
@@ -101,6 +106,7 @@ public class Tetris extends Canvas implements Runnable {
         drawBoard();
         drawPreview();
         drawStats();
+        drawTip();
 
         strategy.show();
         graphics.dispose();
@@ -244,8 +250,14 @@ public class Tetris extends Canvas implements Runnable {
         graphics.drawLine(statsLeft, statsTop, statsLeft, statsBottom);
         graphics.drawLine(statsRight, statsTop, statsRight, statsBottom);
 
-        graphics.drawString("Scores: " + game.getScores(), statsLeft, statsTop + 25);
-        graphics.drawString("Lines: " + game.getLinesBurnt(), statsLeft, statsTop + 55);
+        graphics.drawString("Scores: " + game.getScores(), statsLeft + 5, statsTop + 25);
+        graphics.drawString("Lines: " + game.getLinesBurnt(), statsLeft + 5, statsTop + 55);
+    }
+
+    private void drawTip() {
+        graphics.setFont(tipFont);
+        graphics.setColor(Color.GREEN);
+        graphics.drawString("Press ENTER to start/restart the game.", tipLeft, tipTop);
     }
 
     private void initBoardParams() {
@@ -270,10 +282,16 @@ public class Tetris extends Canvas implements Runnable {
     private void initStatParams() {
         statsTop = (HEIGHT / 2) + 5;
         statsBottom = statsTop + (HEIGHT / 4);
-        statsLeft = 5;
+        statsLeft = 10;
         statsRight = (WIDTH/2) - 5;
         statsWidth = statsRight - statsLeft;
         statsHeight = statsBottom - statsTop;
+    }
+
+    private void initTipParams() {
+        tipFont = new Font("default", Font.BOLD, WIDTH/40);
+        tipLeft = statsLeft;
+        tipTop = (statsTop + previewBottom)/2;
     }
 
     private void prepareColorList() {
